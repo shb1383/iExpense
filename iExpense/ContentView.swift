@@ -12,6 +12,7 @@ struct ExpenseItem: Identifiable, Codable {
     let name: String
     let type: String
     let amount: Double
+    let currency: String
 }
 
 @Observable
@@ -48,12 +49,12 @@ struct ContentView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             Text(item.name)
-                            .font(.headline)
+                                .font(.headline)
                             Text(item.type)
                         }
                         
                         Spacer()
-                        Text(item.amount, format: .currency(code: "USD"))
+                        Text(item.amount, format: .currency(code: item.currency))
                     }
                 }
                 .onDelete(perform: removeItems)
