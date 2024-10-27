@@ -12,7 +12,7 @@ struct AddView: View {
     @State private var name = ""
     @State private var type = "Personal"
     @State private var amount = 0.0
-    @State private var selectedCurrency = "USD"
+    @State private var selectedCurrency = "JPY"
     
     var expenses: Expenses
     
@@ -22,27 +22,39 @@ struct AddView: View {
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Name", text: $name)
+                Section(header: Text("Expense Details")) {
+                    TextField("Name", text: $name)
                 
-                Picker("Type", selection: $type) {
-                    ForEach(types, id: \.self) { Text($0)
+                    Picker("Type", selection: $type) {
+                        ForEach(types, id: \.self) { type in Text(type)
+                        }
                     }
+                
+                    Picker("Currency", selection: $selectedCurrency) {
+                        ForEach(currencies, id: \.self) { currency in
+                            Text(currency)
+                        }
+                    }
+                
+                    TextField("Amount", value: $amount, format: .currency(code: selectedCurrency))
+                        .keyboardType(.decimalPad)
                 }
                 
-                Picker("Currency", selection: $selectedCurrency) {
-                    ForEach(currencies, id: \.self) { Text($0)
-                    }
-                }
-                
-                TextField("Amount", value: $amount, format: .currency(code: selectedCurrency))
-                                    .keyboardType(.decimalPad)
-            }
-            .navigationTitle("Add new expense")
-            .toolbar {
-                Button("Save") {
-                    let item = ExpenseItem(name: name, type: type, amount: amount, currency: selectedCurrency)
+                Section {
+                    Button("Save") {
+                        let item = ExpenseItem(name: name, type: type, amount: amount, currency: selectedCurrency)
                         expenses.items.append(item)
                         dismiss()
+                    }
+                    .disabled(name.isEmpty || amount <= 0)
+                }
+            }
+            .navigationTitle("Add New Expense")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
                 }
             }
         }

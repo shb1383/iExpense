@@ -39,7 +39,6 @@ class Expenses {
 
 struct ContentView: View {
     @State private var expenses = Expenses()
-    
     @State private var showingAddExpense = false
     
     var body: some View {
@@ -55,6 +54,7 @@ struct ContentView: View {
                         
                         Spacer()
                         Text(item.amount, format: .currency(code: item.currency))
+                            .amountStyle(for: item.amount, currency: item.currency)
                     }
                 }
                 .onDelete(perform: removeItems)
@@ -73,6 +73,40 @@ struct ContentView: View {
     
     func removeItems(at offsets: IndexSet) {
         expenses.items.remove(atOffsets: offsets)
+    }
+}
+
+extension View {
+    func amountStyle(for amount: Double, currency: String) -> some View {
+        let isGreen: Bool
+                if currency == "USD" {
+                    isGreen = amount < 10
+                } else if currency == "EUR" {
+                    isGreen = amount < 10
+                } else if currency == "GBP" {
+                    isGreen = amount < 10
+                } else if currency == "JPY" {
+                    isGreen = amount < 1000
+                }else {
+                    isGreen = false
+                }
+        
+        let isBlue: Bool
+                if currency == "USD" {
+                    isBlue = amount < 100
+                } else if currency == "EUR" {
+                    isBlue = amount < 100
+                } else if currency == "GBP" {
+                    isBlue = amount < 100
+                } else if currency == "JPY" {
+                    isBlue = amount < 10000
+                } else {
+                    isBlue = false
+                }
+
+                return self
+                    .foregroundColor(isGreen ? .green : isBlue ? .blue : .red)
+                    .bold()
     }
 }
 
