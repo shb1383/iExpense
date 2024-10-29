@@ -48,14 +48,18 @@ struct ContentView: View {
                     ForEach(expenses.items.filter { $0.type == "Personal" }) { item in
                         expenseRow(for: item)
                     }
-                    .onDelete(perform: removeItems)
+                    .onDelete(perform: { offsets in
+                        removeItems(at: offsets, ofType: "Personal")
+                    })
                 }
                                 
                 Section(header: Text("Business Expenses")) {
                     ForEach(expenses.items.filter { $0.type == "Business" }) { item in
                         expenseRow(for: item)
                     }
-                    .onDelete(perform: removeItems)
+                    .onDelete(perform: { offsets in
+                        removeItems(at: offsets, ofType: "Business")
+                    })
                 }
             }
             .navigationTitle("iExpense")
@@ -84,8 +88,23 @@ struct ContentView: View {
         }
     }
         
-    func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
+    func removeItems(at offsets: IndexSet, ofType type: String) {
+        let filteredItems = expenses.items.filter { $0.type == type }
+        let originalItems = expenses.items
+            
+        for index in offsets {
+            if let itemToDelete = filteredItems[safe: index] {
+                if let originalIndex = originalItems.firstIndex(where: { $0.id == itemToDelete.id }) {
+                    expenses.items.remove(at: originalIndex)
+                }
+            }
+        }
+    }
+}
+
+extension Collection {
+    subscript(safe index: Index) -> Element? {
+        indices.contains(index) ? self[index] : nil
     }
 }
 
