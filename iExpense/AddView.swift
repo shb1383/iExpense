@@ -16,8 +16,8 @@ struct AddView: View {
     
     var expenses: Expenses
     
-    let types = ["Business", "Personal"]
-    let currencies = ["USD", "EUR", "JPY", "GBP"]
+    let types = ["Personal", "Business"]
+    let currencies = ["JPY", "USD", "EUR", "GBP"]
     
     var body: some View {
         NavigationStack {
@@ -39,22 +39,28 @@ struct AddView: View {
                     TextField("Amount", value: $amount, format: .currency(code: selectedCurrency))
                         .keyboardType(.decimalPad)
                 }
-                
-                Section {
-                    Button("Save") {
-                        let item = ExpenseItem(name: name, type: type, amount: amount, currency: selectedCurrency)
-                        expenses.items.append(item)
-                        dismiss()
-                    }
-                    .disabled(name.isEmpty || amount <= 0)
-                }
             }
-            .navigationTitle("Add New Expense")
+            .padding(.top, -50)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") {
                         dismiss()
                     }
+                }
+                            
+                ToolbarItem(placement: .principal) {
+                    Text("New Expense")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                }
+                            
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Add") {
+                        let item = ExpenseItem(name: name, type: type, amount: amount, currency: selectedCurrency)
+                        expenses.items.append(item)
+                        dismiss()
+                    }
+                    .disabled(name.isEmpty || amount <= 0)
                 }
             }
         }
